@@ -39,7 +39,7 @@ class WageSerializer(serializers.ModelSerializer):
         model = Wage
         fields = '__all__'
 
-class Inputerializer(serializers.ModelSerializer):
+class InputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Input
         fields = '__all__'
