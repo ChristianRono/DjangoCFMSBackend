@@ -13,6 +13,14 @@ from main.models import (
     Output,
     Tool,
     Cost)
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def get_token(self, user):
+        token = super().get_token(user)
+        token['permissions'] = list(user.get_all_permissions())  # Include permissions
+        return token
+
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
