@@ -120,7 +120,7 @@ class Tool(models.Model):
     description = models.TextField()
     quantity = models.IntegerField()
     amount = models.FloatField()
-    paid_by = models.CharField()
+    paid_by = models.CharField(max_length=100)
     returned = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now=True)
 
@@ -128,7 +128,7 @@ class Tool(models.Model):
         return self.name
 
 class Cost(models.Model):
-    input_ = models.ManyToManyField(Input)
+    input_model = models.ManyToManyField(Input)
     description = models.TextField()
     amount = models.FloatField()
     date = models.DateField()
