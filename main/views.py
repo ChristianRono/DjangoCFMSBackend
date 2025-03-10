@@ -1,5 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
 from main.permissions import ModelPermissions
 from main.models import (
     Employee,
@@ -16,6 +20,7 @@ from main.models import (
     Tool,
     Cost)
 from main.serializers import (
+    RegisterSerializer,
     EmployeeSerializer,
     SalarySerializer,
     CreditSerializer,
@@ -32,6 +37,31 @@ from main.serializers import (
 
 class BaseModelViewSet(viewsets.ModelViewSet):
     permission_classes = [ModelPermissions]
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        return Response({
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+            },
+            "tokens": {
+                "refresh": str(refresh),
+                "access": access_token
+            }
+        })
 
 class EmployeeViewSet(BaseModelViewSet):
     queryset = Employee.objects.all()
